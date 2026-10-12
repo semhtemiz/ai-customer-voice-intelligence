@@ -34,7 +34,7 @@
     "eslint-config-next": "16.3.8",
     "playwright": "^1.64.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "description": "SQL, NLP ve kanıta dayalı AI özetleriyle müşteri yorum analizi dashboard’u.",
   "engines": {
