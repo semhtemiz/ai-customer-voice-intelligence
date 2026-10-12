@@ -1,0 +1,10 @@
+# Üçüncü taraf kaynakları
+
+- **OrbynAdmin:** https://github.com/masondevx/orbynadmin · kaynak commit `6c2796f7baf7330ca9f4e8260a92af59cb97070d`. MIT lisans metni ve Copyright (c) 2026 OrbynAdmin, `frontend/LICENSE` dosyasında korunur. Sidebar, shadcn/ui bileşenleri ve tema/spacing başlangıç kaynağıdır. Demo data/navigation kaldırıldı, Customer Voice sayfa kompozisyonu yeniden yazıldı.
+- **Dataset:** nicapotato, Women’s E-Commerce Clothing Reviews, https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews/metadata. Yayıncı metadata’sı CC0: Public Domain (12 Ekim 2026 incelemesi). Hugging Face mirror: https://huggingface.co/datasets/chibifire/kaggle-womens-ecom-clothing-reviews · cc0-1.0. CC0 koşulları: https://creativecommons.org/publicdomain/zero/1.0/. Ham CSV kaynak paketinde yer almaz; kullanıcı veri kaynağından edinir. Kaynak anonymity beyanına rağmen uygulama metinlerde ek email/telefon baseline maskelemesi uygular; tüm kişisel bilgilerin tespiti iddia edilmez.
+- **Sentiment modeli:** Cardiff NLP `twitter-roberta-base-sentiment-latest`, https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment-latest. Revision `3216a57f2a0d9c45a2e6c20157c20c49fb4bf9c7`; model kartında CC-BY-4.0. Model ağırlıkları kaynak paketinde dağıtılmaz. Atıf: Loureiro et al., *TimeLMs: Diachronic Language Models from Twitter* (2022), https://arxiv.org/abs/2202.03829; model kartındaki ilgili TimeLMs/TweetNLP referansları temel kaynaktır. Değişiklik: local inference öncesi belgelenen username/URL normalizasyonu ve 256 token truncation; fine-tuning yapılmadı.
+- Bağımlılıklar `backend/requirements.txt` ve `frontend/pnpm-lock.yaml` ile sabitlenir. Kaynak paket node_modules/venv içermez; kurulan bağımlılıkların kendi lisansları geçerlidir.
+
+Model tahminleri ve keyword baseline etiketleri ground truth değildir. Dataset/model/kod lisansları birbirinin yerine geçmez.
+
+- **shadcn/ui CSS:** kullanılan `shadcn@4.13.0/dist/tailwind.css`, `frontend/src/styles/shadcn.css` altında korunur. MIT Copyright (c) 2023 shadcn metni `frontend/licenses/shadcn-MIT.md` içindedir. CLI/MCP paketi runtime’dan çıkarılmıştır.

@@ -1,0 +1,34 @@
+"use client";
+import { api, type FilteredQuality } from "@/lib/api";
+import { localizeLimitation } from "@/lib/locale";
+import { useFilters } from "./shell";
+import { useResource, ResourceState } from "./resource";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+const number = (value:number) => value.toLocaleString("tr-TR");
+const labels: [keyof FilteredQuality,string][] = [
+  ["missing_text_count","Yorum metni eksik"],["missing_title_count","Başlık eksik"],
+  ["invalid_or_missing_rating_count","Rating eksik / geçersiz"],
+  ["invalid_or_missing_recommendation_count","Tavsiye değeri eksik / geçersiz"],
+  ["invalid_or_missing_age_count","Yaş eksik / geçersiz"],
+  ["missing_division_count","Division eksik"],["missing_department_count","Departman eksik"],["missing_class_count","Ürün sınıfı eksik"],
+];
+export function QualityScreen() {
+  const { filters } = useFilters();
+  const resource = useResource(JSON.stringify(filters),signal => api.quality(filters,signal));
+  if (!resource.data) return <><h1 className="text-2xl font-semibold">Veri Kalitesi</h1><ResourceState error={resource.error} retry={resource.retry} /></>;
+  const { import_report:report, filtered_quality:quality, imported_at } = resource.data.data;
+  const cards = [
+    { id:"import-total",label:"Kaynak kayıtları",value:report.row_count,description:"Genel import · tüm veri seti" },
+    { id:"import-missing-text",label:"Metni olmayan yorumlar",value:report.blank_counts["Review Text"] || 0,description:"Geçerli rating/tavsiye değerleri KPI’a dahildir" },
+    { id:"import-duplicates",label:"Ek içerik tekrarları",value:report.duplicate_content_excess_count,description:"Farklı kaynak ID’leri korundu" },
+    { id:"quality-matched",label:"Filtreli kayıtlar",value:quality.review_count,description:"Yalnızca aktif filtrelerle eşleşenler" },
+  ];
+  const missing = Object.entries(report.blank_counts).filter(([column]) => column !== "");
+  return <>
+    <div><p className="mb-2 text-xs font-semibold tracking-widest text-muted-foreground">VERİ GÜVENİLİRLİĞİ</p><h1 className="text-2xl font-semibold">Veri Kalitesi</h1><p className="mt-2 text-sm text-muted-foreground">Kaynak dosya ve filtreli kayıtlardaki eksik/geçersiz alanlar.</p></div>
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{cards.map(card => <Card key={card.id}><CardHeader><CardTitle className="text-sm text-muted-foreground">{card.label}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold tabular-nums" data-testid={card.id}>{number(card.value)}</p><p className="mt-2 text-xs text-muted-foreground">{card.description}</p></CardContent></Card>)}</div>
+    <div className="grid gap-5 xl:grid-cols-2"><Card><CardHeader><CardTitle>Genel import raporu</CardTitle><CardDescription>Tüm kaynak dosya; aktif filtrelerden etkilenmez.</CardDescription></CardHeader><CardContent className="space-y-5"><table className="w-full text-sm"><caption className="sr-only">Kaynak kolonlarındaki eksik alanlar</caption><thead><tr className="border-b text-xs text-muted-foreground"><th scope="col" className="pb-2 text-left">Kaynak kolon</th><th scope="col" className="pb-2 text-right">Eksik</th></tr></thead><tbody>{missing.map(([column,count]) => <tr key={column} className="border-b last:border-0"><th scope="row" className="py-2 text-left font-normal">{column}</th><td className="py-2 text-right tabular-nums">{number(count)}</td></tr>)}</tbody></table><dl className="grid grid-cols-2 gap-3 text-xs">{[["Geçersiz kaynak ID",report.invalid_source_id_count],["Tekrarlanan kaynak ID",report.duplicate_source_id_count],["Geçersiz rating",report.invalid_rating_count],["Geçersiz tavsiye değeri",report.invalid_recommendation_count],["Geçersiz yaş",report.invalid_age_count]].map(([label,count]) => <div key={label}><dt className="text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold">{number(count as number)}</dd></div>)}</dl><p className="text-xs leading-relaxed text-muted-foreground">İçerik tekrarları otomatik silinmez. Eksik yorum metni olan geçerli rating ve tavsiye değerleri KPI hesaplamalarına dahildir.</p></CardContent></Card>
+      <Card><CardHeader><CardTitle>Filtreli kalite görünümü</CardTitle><CardDescription><span data-testid="filtered-quality-total">{number(quality.review_count)}</span> eşleşen kayıt · temizleme sonrası alanlar</CardDescription></CardHeader><CardContent className="space-y-4">{quality.review_count === 0 && <p role="status" className="rounded-md bg-muted p-3 text-sm">Bu filtrelerle eşleşen kayıt yok. Eksiklik oranları hesaplanamaz; genel import raporu gösterilmeye devam eder.</p>}<table className="w-full text-sm"><caption className="sr-only">Filtreli kayıtların eksik/geçersiz alanları</caption><thead><tr className="border-b text-xs text-muted-foreground"><th scope="col" className="pb-2 text-left">Kontrol</th><th scope="col" className="pb-2 text-right">Kayıt</th><th scope="col" className="pb-2 text-right">Oran</th></tr></thead><tbody>{labels.map(([key,label]) => <tr key={key} className="border-b last:border-0"><th scope="row" className="py-3 text-left font-normal">{label}</th><td className="text-right tabular-nums" data-testid={`quality-${key}`}>{number(quality[key])}</td><td className="pl-2 text-right text-xs tabular-nums text-muted-foreground">{quality.review_count ? "%"+(100*quality[key]/quality.review_count).toLocaleString("tr-TR",{maximumFractionDigits:2}) : "Veri yok"}</td></tr>)}</tbody></table><p className="text-xs leading-relaxed text-muted-foreground">Geçersiz değerler import sırasında NULL’a çevrilir. Filtreli görünüm eksik ve geçersiz değerleri birlikte sayar; genel rapor kaynak verideki geçersizleri ayrıca gösterir.</p></CardContent></Card></div>
+    <Card><CardHeader><CardTitle>Kaynak ve metodolojik sınırlar</CardTitle><CardDescription>Kaynak dosyanın checksum’ı ve import zamanı. Yorum tarihi içermez.</CardDescription></CardHeader><CardContent className="space-y-4"><dl className="grid gap-4 text-sm sm:grid-cols-2"><div><dt className="text-xs text-muted-foreground">Kaynak dosya</dt><dd className="mt-1 break-words">{report.file}</dd></div><div><dt className="text-xs text-muted-foreground">Import işlem zamanı · Europe/Istanbul</dt><dd className="mt-1">{new Date(imported_at).toLocaleString("tr-TR",{timeZone:"Europe/Istanbul"})}</dd></div><div className="sm:col-span-2"><dt className="text-xs text-muted-foreground">SHA-256</dt><dd className="mt-1 break-all font-mono text-xs" data-testid="dataset-checksum">{report.sha256}</dd></div></dl><details className="text-xs text-muted-foreground"><summary className="cursor-pointer font-medium">Analiz sınırlılıkları</summary><ul className="mt-3 space-y-2 leading-relaxed">{resource.data.meta.limitations.map(note => <li key={note}>• {localizeLimitation(note)}</li>)}</ul></details></CardContent></Card>
+  </>;
+}

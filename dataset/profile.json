@@ -1,0 +1,66 @@
+{
+  "file": "dataset/Womens Clothing E-Commerce Reviews.csv",
+  "sha256": "bd93cc515747ad1f87b8bc863c9e40da758509e6db6506a96d06976e61e36ee0",
+  "row_count": 23486,
+  "columns": [
+    "",
+    "Clothing ID",
+    "Age",
+    "Title",
+    "Review Text",
+    "Rating",
+    "Recommended IND",
+    "Positive Feedback Count",
+    "Division Name",
+    "Department Name",
+    "Class Name"
+  ],
+  "blank_counts": {
+    "": 0,
+    "Clothing ID": 0,
+    "Age": 0,
+    "Title": 3810,
+    "Review Text": 845,
+    "Rating": 0,
+    "Recommended IND": 0,
+    "Positive Feedback Count": 0,
+    "Division Name": 14,
+    "Department Name": 14,
+    "Class Name": 14
+  },
+  "invalid_source_id_count": 0,
+  "duplicate_source_id_count": 0,
+  "duplicate_content_excess_count": 21,
+  "invalid_rating_count": 0,
+  "invalid_recommendation_count": 0,
+  "invalid_age_count": 0,
+  "age_range": [
+    18,
+    99
+  ],
+  "rating_counts": {
+    "1": 842,
+    "2": 1565,
+    "3": 2871,
+    "4": 5077,
+    "5": 13131
+  },
+  "department_counts": {
+    "Bottoms": 3799,
+    "Dresses": 6319,
+    "Intimate": 1735,
+    "Jackets": 1032,
+    "Tops": 10468,
+    "Trend": 119,
+    "Unknown": 14
+  },
+  "kpis": {
+    "total_reviews": 23486,
+    "avg_rating": 4.2,
+    "recommendation_rate_pct": 82.24,
+    "low_rating_rate_pct": 10.25,
+    "valid_rating_count": 23486,
+    "valid_recommendation_count": 23486,
+    "text_review_count": 22641
+  }
+}
