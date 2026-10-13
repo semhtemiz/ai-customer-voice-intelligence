@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { IconMessageCircle, IconStar, IconThumbUp, IconAlertTriangle } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -15,21 +15,21 @@ const metric = (value: number | null, suffix = "") => value === null ? "Veri yok
 type Data = { overview: Response<Overview>; ratings: Response<Ratings>; categories: Response<Category[]> };
 export function OverviewScreen() {
   const { filters, setFilters } = useFilters(); const key = JSON.stringify(filters);
-  const [state, setState] = useState<{ key: string; data?: Data; error?: string }>();
   const [retry, setRetry] = useState(0);
+  const scope = useMemo(() => ({ key, retry }), [key, retry]);
+  const [state, setState] = useState<{ scope:typeof scope; data?: Data; error?: string }>();
   useEffect(() => {
     const controller = new AbortController();
-    setState({ key });
     Promise.all([api.overview(filters, controller.signal), api.ratings(filters, controller.signal), api.categories(filters, controller.signal)])
       .then(([overview, ratings, categories]) => {
         if (new Set([overview.meta.dataset_sha256, ratings.meta.dataset_sha256, categories.meta.dataset_sha256]).size !== 1) throw new Error("Veri seti yükleme sırasında değişti. Yeniden deneyin.");
-        if (!controller.signal.aborted) setState({ key, data: { overview, ratings, categories } });
-      }).catch(error => { if (!controller.signal.aborted) setState({ key, error: error instanceof Error && error.message !== "Failed to fetch" ? error.message : "Analiz servisine ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin." }); });
+        if (!controller.signal.aborted) setState({ scope, data: { overview, ratings, categories } });
+      }).catch(error => { if (!controller.signal.aborted) setState({ scope, error: error instanceof Error && error.message !== "Failed to fetch" ? error.message : "Analiz servisine ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin." }); });
     return () => controller.abort();
   // key is the canonical snapshot of filters; prevents stale responses after edits.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, retry]);
-  const current = state?.key === key ? state : undefined;
+  }, [scope]);
+  const current = state?.scope === scope ? state : undefined;
   const data = current?.data;
   return <>
     <h1 className="sr-only">Overview</h1>

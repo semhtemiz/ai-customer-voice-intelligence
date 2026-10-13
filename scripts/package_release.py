@@ -20,6 +20,9 @@ def main():
     if findings:raise ValueError('Publication blocked: credential/private-path scan failed; values are not printed')
     output=ROOT/'release';output.mkdir(exist_ok=True)
     destination=output/'github-public'
+    # Never move or replace an active publication checkout or its Git history.
+    if (destination/'.git').exists():
+        destination=output/'github-public-export'
     if destination.exists():
         backup=output/('github-public-backup-'+datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f'))
         destination.rename(backup)

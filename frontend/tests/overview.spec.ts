@@ -1,7 +1,6 @@
 import { test, expect } from "playwright/test";
 import fs from "node:fs";
 test("real metrics, filters, reset and shared navigation", async ({ page, request }) => {
-  const expected = await (await request.get("http://localhost:8000/api/overview")).json();
   await page.goto("/");
   await expect(page.getByTestId("total-reviews")).toHaveText("23.486");
   await page.getByLabel("Departman", { exact:true }).selectOption("Tops");

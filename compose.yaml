@@ -10,7 +10,7 @@ services:
         required: false
     environment:
       DATABASE_PATH: /app/backend/data/reviews.db
-      CORS_ORIGINS: http://localhost:3000
+      CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-3000}
       PYTHONUNBUFFERED: "1"
     ports:
       - "127.0.0.1:8000:8000"
@@ -46,7 +46,7 @@ services:
       PORT: "3000"
       NODE_ENV: production
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
     depends_on:
       backend:
         condition: service_healthy

@@ -40,3 +40,5 @@ Kullanıcı authentication/authorization bulunmaz. Compose yalnızca localhost p
 - Bilinen anahtar pattern’lerine ek olarak yerel NVIDIA/OpenAI anahtar değerleri public dosya byte’larıyla karşılaştırıldı; eşleşme yok. Anahtar değerleri çıktılanmadı.
 - GitHub Actions ve Dependabot dosyaları hazırlandı; GitHub’a push yapılmadığından hosted CI henüz çalışmadı. Yerel test sonucu hosted CI sonucu olarak sunulmaz.
 - Public allowlist: **123 dosya**, tek `screenshots/overview.png`. README local link’leri, ZIP file/hash manifest’i ve nested Git/ham veri/env dışlamaları son paket üzerinde doğrulanır.
+
+13 Ekim 2026 tekrar kontrolü: production/Python audit sonuçları değişmedi; lint, Docker port çakışması ve iki ek UI regresyonu [tam test raporunda](FULL_RETEST.md) kaydedildi.

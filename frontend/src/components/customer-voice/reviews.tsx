@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useReactTable, getCoreRowModel, flexRender, type ColumnDef } from "@tanstack/react-table";
 import { api, emptyFilters, type Review } from "@/lib/api";
 import { useFilters } from "./shell";
@@ -24,7 +24,7 @@ export function ReviewsScreen() {
   const returnFocusId = useRef<number | null>(null);
   const [selection,setSelection] = useState<{ key:string; review:Review } | null>(null);
   const selected = selection?.key === key ? selection.review : null;
-  const columns = useMemo<ColumnDef<Review>[]>(() => [
+  const columns: ColumnDef<Review>[] = [
     { accessorKey:"review_id", header:"ID", cell: info => <span className="tabular-nums text-muted-foreground">#{String(info.getValue())}</span> },
     { accessorKey:"title", header:"Yorum", cell: ({ row }) => <button className="block w-full min-w-48 max-w-sm text-left focus-visible:outline-2 focus-visible:outline-primary" aria-label={`Yorum #${row.original.review_id} ayrıntısını aç`} onClick={event => { returnFocus.current = event.currentTarget; returnFocusId.current = row.original.review_id; setSelection({ key,review:row.original }); view.prioritize(row.original.review_id); }}>{view.language==='tr'&&!view.translated(row.original)&&<span className="block text-xs text-muted-foreground">EN · kaynak</span>}<span lang={view.contentLanguage(row.original)} className="block truncate font-medium">{view.title(row.original)?.trim() || "Başlıksız yorum"}</span><span lang={view.contentLanguage(row.original)} className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{view.text(row.original)?.trim() || "Yorum metni yok"}</span></button> },
     { accessorKey:"department_name", header:"Departman", cell: ({ row }) => <div>{row.original.department_name}<span className="mt-1 block text-xs text-muted-foreground">{row.original.class_name}</span></div> },
@@ -32,7 +32,9 @@ export function ReviewsScreen() {
     { accessorKey:"recommended_ind", header:"Tavsiye", cell: ({ row }) => recommendation(row.original.recommended_ind) },
     { accessorKey:"sentiment", header:"Sentiment", cell: ({ row }) => <Badge variant="secondary">{row.original.sentiment}</Badge> },
     { id:"topics", header:"Topic", cell: ({ row }) => row.original.complaint_topics.length ? <div className="flex flex-wrap gap-1">{row.original.complaint_topics.map(topic => <Badge variant="outline" key={topic}>{topic}</Badge>)}</div> : <span className="text-xs text-muted-foreground">Etiket yok</span> },
-  ], [key,view.title,view.text]);
+  ];
+  // React Compiler is disabled; this screen consumes TanStack’s mutable table API directly.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({ data:resource.data?.items || [], columns, getCoreRowModel:getCoreRowModel(), manualPagination:true, state:{ pagination:{pageIndex:page-1,pageSize:size} }, rowCount:resource.data?.total || 0, getRowId:row => String(row.review_id) });
   const navigate = (next:number) => setPagination({ key:filtersKey,page:next,size });
   return <>

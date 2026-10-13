@@ -41,7 +41,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Production kontrolü: `pnpm build`; tip kontrolü: `pnpm typecheck`. Docker frontend API isteklerini aynı origin üzerinden backend’e proxy eder.
+Production kontrolü: `pnpm build`; tip kontrolü: `pnpm typecheck`; lint: `pnpm lint`. Docker frontend API isteklerini aynı origin üzerinden backend’e proxy eder.
 
 ## Opsiyonel LLM
 
@@ -69,3 +69,5 @@ python scripts/check_docker.py
 Tarayıcı testleri yerel dataset ve çalışan Docker servislerini gerektirir. Testte dış LLM çağrısı yapmamak için backend anahtarlarını geçici boşaltın; TR UI testleri mock provider yanıtı kullanır. `frontend` içinde `pnpm exec playwright install chromium` ve `pnpm test:e2e`.
 
 Public kaynak çıktısı: `python scripts/package_release.py`. Çıktı `release/github-public/` ve `release/customer-voice-source.zip`; dosya manifest’i `release/manifest.json`. Çıktı temiz kaynak ağacıdır; çalışma klasöründeki template Git geçmişini, plan/skill dosyalarını veya yerel veriyi kopyalamaz.
+
+`release/github-public/` aktif Git checkout içeriyorsa packager onu değiştirmez; yeni snapshot `release/github-public-export/` altında oluşturulur. ZIP güncel kaynakla yenilenir, mevcut remote/branch/yerel değişiklikler korunur.

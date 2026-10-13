@@ -8,6 +8,7 @@ TR / EN tercihi localStorage’da tutulur; görünür/açılan yorumlar önce ç
 
 ```bash
 pnpm install --frozen-lockfile
+pnpm lint
 pnpm typecheck
 pnpm build
 pnpm test:e2e
